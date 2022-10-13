@@ -1,0 +1,82 @@
+package com.claudiomendonca.calcprojapi.controller;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.AllArgsConstructor;
+
+import com.claudiomendonca.calcprojapi.model.Empresasistema;
+import com.claudiomendonca.calcprojapi.repository.EmpresasistemaRepository;
+
+@RestController
+@RequestMapping("/api/empresasistema")
+@AllArgsConstructor
+public class EmpresasistemaController {
+
+    
+    private final EmpresasistemaRepository empresasistemaRepository;
+
+    @GetMapping
+    public @ResponseBody List<Empresasistema> list() {
+        return empresasistemaRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Empresasistema> findById(@PathVariable Long id) {
+        return empresasistemaRepository.findById(id)
+                .map(recordFound -> ResponseEntity.ok().body(recordFound))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    
+    @PostMapping
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public Empresasistema create(@RequestBody Empresasistema empresasistema) {
+        return empresasistemaRepository.save(empresasistema);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Empresasistema> update(@PathVariable Long id,
+            @RequestBody Empresasistema empresasistema) {
+        return empresasistemaRepository.findById(id)
+                .map(recordFound -> {
+                    recordFound.setEmpresa(empresasistema.getEmpresa());
+                    recordFound.setCnpj(empresasistema.getCnpj());
+                    recordFound.setEndereco(empresasistema.getEndereco());
+                    recordFound.setCep(empresasistema.getCep());
+                    recordFound.setTelefone(empresasistema.getTelefone());
+                    recordFound.setEmail(empresasistema.getEmail());
+                    recordFound.setResponsavel(empresasistema.getResponsavel());
+                    recordFound.setLogotipo(empresasistema.getLogotipo());
+                    Empresasistema updated = empresasistemaRepository.save(recordFound);
+                    return ResponseEntity.ok().body(updated);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        return empresasistemaRepository.findById(id)
+                .map(recordFound -> {
+                    empresasistemaRepository.deleteById(id);
+                    return ResponseEntity.noContent().<Void>build();
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
+    
+}

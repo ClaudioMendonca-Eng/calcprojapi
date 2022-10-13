@@ -1,0 +1,23 @@
+package com.claudiomendonca.calcprojapi.Service;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.claudiomendonca.calcprojapi.model.Empresasistema;
+
+@Service
+public class EmpresasistemaService {
+
+    @Autowired
+    private EmpresasistemaService repo;
+
+    public Empresasistema find(Long id) {
+        Optional<Empresasistema> obj = repo.findById(id);
+        return obj.orElseThrow(null);
+    }
+
+
+    
+}
